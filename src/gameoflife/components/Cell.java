@@ -15,11 +15,21 @@ public class Cell {
     private int x = 0;
     private int y = 0;
     private int neighborCount = 0;
-    private enum statusTypes{
+    public enum statusTypes{
         ALIVE,
         DEAD
     }
     private statusTypes status;
+    public static int[][] surroundingCoords = {
+                    {-1,-1},
+                    {-1,0},
+                    {-1,1},
+                    {0,-1},
+                    {0,1},
+                    {1,-1},
+                    {1,0},
+                    {1,1}
+    };
     
     public Cell(){
         init();
@@ -51,8 +61,20 @@ public class Cell {
         this.y = y;
     }
     
+    public String getKey(){
+        return String.valueOf(x)+","+String.valueOf(y);
+    }
+    
+    public static String genKey(int x, int y){
+        return String.valueOf(x)+","+String.valueOf(y);
+    }
+    
     public void addNeighbor(){
         neighborCount++;
+    }
+    
+    public void resetNeighborCount(){
+        neighborCount=0;
     }
     
     public statusTypes getStatus() {
