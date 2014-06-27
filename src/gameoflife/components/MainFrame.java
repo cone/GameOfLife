@@ -1,13 +1,5 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
-
 package gameoflife.components;
 
-import static gameoflife.components.Board.GameState;
-import gameoflife.control.Algorithm;
 import java.awt.BorderLayout;
 import java.util.Observable;
 import java.util.Observer;
@@ -22,7 +14,7 @@ import javax.swing.JToolBar;
 
 /**
  *
- * @author toshiba
+ * @author Carlos Gutierrez
  */
 public class MainFrame extends JFrame implements Observer{
    private Board board;
@@ -37,9 +29,10 @@ public class MainFrame extends JFrame implements Observer{
    private JMenu ops;
    private JMenu help;
    private static final String INSTRUCTIONS = "Click on the squares to select them and create your own patterns!\n"+
-           "or select the \"Fill randomly\" option in the menu. Enjoy!";
-   private static final String ABOUT = "Created by Carlos Gutierres \"coneramu@gmail.com\"\n Skype user: carlos.gutierrez.cone \n"+
-           "";
+           "(try a vertical line of 10 cells, you will be amazed)\n"+
+           "or select the \"Fill randomly\" option in the menu.\n Enjoy!";
+   private static final String ABOUT = "Created by Carlos Gutierres \"coneramu@gmail.com\"\n"+
+           "Skype user: carlos.gutierrez.cone \n";
     
    public MainFrame() {
     super("Game Of Life");
@@ -54,6 +47,9 @@ public class MainFrame extends JFrame implements Observer{
     setVisible(true);
    }
 
+   /**
+    * Adding the menu bar
+    */
    private void addMenu(){
         menubar = new JMenuBar();
         ops = new JMenu("Options");
@@ -105,12 +101,21 @@ public class MainFrame extends JFrame implements Observer{
         setJMenuBar(menubar);
    }
    
+   /**
+    * Changing the number and size of the cells
+    * @param side The new value for the cell sides length
+    * @param amount The amount that will be displayed in 
+    * the message zone
+    */
    private void setNewBounds(int side, String amount){
        Cell.sideValue = side;
        message.setText("  Number of cells changed to "+amount);
        board.reset();
    }
    
+   /**
+    * Adding the tool bar
+    */
    private void addOptions(){
         board = new Board(boardSize);
         board.addObserver(this);
@@ -138,6 +143,12 @@ public class MainFrame extends JFrame implements Observer{
         stopbtn.setEnabled(false);
    }
 
+   
+   /**
+    * Accions taken when the game state is changed
+    * @param o
+    * @param arg 
+    */
     @Override
     public void update(Observable o, Object arg) {
         message.setText("   "+String.valueOf(arg));

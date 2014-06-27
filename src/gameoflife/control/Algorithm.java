@@ -1,9 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
-
 package gameoflife.control;
 
 import gameoflife.components.*;
@@ -12,7 +6,7 @@ import java.util.HashMap;
 
 /**
  *
- * @author toshiba
+ * @author Carlos Gutierrez
  */
 public class Algorithm{
     private HashMap<String, Cell> cells = new HashMap();
@@ -61,6 +55,13 @@ public class Algorithm{
         alivecells=0;
     }
     
+    /**
+     * Algorithm tha creates the next 
+     * generation of cells. It only
+     * uses one cell hash.
+     * @return If there are any movements
+     * left for a next generation
+     */
     public boolean createnextGen(){
         int sides = panelSideValue/Cell.sideValue;
         toLive.clear();
@@ -99,6 +100,11 @@ public class Algorithm{
             deadCell.setStatus(Cell.statusTypes.DEAD);
             alivecells--;
         });
+        /**
+         * If no more cells to revive/kill then
+         * we should return a flag so the game
+         * can be stopped.
+         */
         if(toLive.isEmpty() && toDie.isEmpty()){
             return false;
         }
