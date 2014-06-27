@@ -50,8 +50,10 @@ public class Algorithm{
         }
     }
     
-    public void createnextGen(){
+    public boolean createnextGen(){
         int sides = panelSideValue/Cell.sideValue;
+        toLive.clear();
+        toDie.clear();
         int[] xy;
         Cell cell;
         Cell aux;
@@ -79,17 +81,17 @@ public class Algorithm{
             }
         }
         toLive.stream().forEach((liveCell) -> {
-            if(liveCell.getStatus() == Cell.statusTypes.DEAD){
-                liveCell.setStatus(Cell.statusTypes.ALIVE);
-                alivecells++;
-            }
+            liveCell.setStatus(Cell.statusTypes.ALIVE);
+            alivecells++;
         });
         toDie.stream().forEach((deadCell) -> {
-            if(deadCell.getStatus() == Cell.statusTypes.ALIVE){
-                deadCell.setStatus(Cell.statusTypes.DEAD);
-                alivecells--;
-            }
+            deadCell.setStatus(Cell.statusTypes.DEAD);
+            alivecells--;
         });
+        if(toLive.isEmpty() && toDie.isEmpty()){
+            return false;
+        }
+       return true;
    }
     
     public int getAliveCells(){

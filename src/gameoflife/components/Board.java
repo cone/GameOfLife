@@ -8,6 +8,7 @@ package gameoflife.components;
 
 import gameoflife.components.Cell.statusTypes;
 import static gameoflife.components.Cell.statusTypes;
+import gameoflife.control.Algorithm;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
@@ -23,22 +24,30 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Observable;
 
 import javax.swing.*;
-import gameoflife.control.Algorithm;
 /**
  *
  * @author toshiba
  */
-public class Board extends JPanel implements MouseListener, Runnable{
+public class Board extends Observable implements Runnable{
     private Algorithm al;
     private int boardSize;
     private Thread golthread;
+    private GameZone gameZone;
+    private String message;
+    public enum GameState{
+        STARTED,
+        STOPPED
+    }
+    private GameState state; 
     
     public Board(int boardSize){
        this.al =new Algorithm(boardSize);
        this.boardSize = boardSize;
-       addMouseListener(this);
+       gameZone = new GameZone();
+       state = GameState.STOPPED;
        fill();
     }
     
@@ -55,9 +64,10 @@ public class Board extends JPanel implements MouseListener, Runnable{
         return al.getAliveCells();
     }
     
-    public void createnextGen(){
-        al.createnextGen();
-        repaint();
+    public boolean createnextGen(){
+        boolean hasMoreMoves = al.createnextGen();
+        gameZone.repaint();
+        return hasMoreMoves;
     }
    
     public void addCell(Cell cell) {
@@ -71,7 +81,7 @@ public class Board extends JPanel implements MouseListener, Runnable{
         if(cell != null){
             toggleCell(cell);
         }
-        repaint();
+        gameZone.repaint();
     }
    
     private void toggleCell(Cell cell){
@@ -79,75 +89,120 @@ public class Board extends JPanel implements MouseListener, Runnable{
     }
     
     public void startGame(){
+        state = GameState.STARTED;
         golthread  = new Thread(this);
         golthread.start();
+        changed("Game started!");
     }
     
     public void stopGame(){
+        doStop();
+        changed("Game stopped!");
+    }
+    
+    public void stopGame(String message){
+        doStop();
+        changed(message);
+    }
+    
+    private void doStop(){
+        state = GameState.STOPPED;
         golthread.interrupt();
     }
 
-   @Override
-   public Dimension getPreferredSize() {
-      return new Dimension(boardSize, boardSize);
-   }
-
-   @Override
-   protected void paintComponent(Graphics g) {
-      super.paintComponent(g);
-      Graphics2D g2 = (Graphics2D) g;
-      Iterator i = al.getCells().entrySet().iterator();
-      while(i.hasNext()) {
-         Map.Entry<String, Cell> pairs = (Map.Entry)i.next();
-         Cell cell = pairs.getValue();
-         Rectangle rect = new Rectangle(cell.getX()*Cell.sideValue, cell.getY()*Cell.sideValue, Cell.sideValue, Cell.sideValue);
-         g2.draw(rect);
-         if(cell.getStatus() == statusTypes.ALIVE){
-             g.fillRect(cell.getX()*Cell.sideValue, cell.getY()*Cell.sideValue, Cell.sideValue, Cell.sideValue);
-         }
-      }
-   }
-
-    @Override
-    public void mouseClicked(MouseEvent e) {
-        selectCell(e);
+    public JPanel getPanel(){
+        return gameZone;
     }
-
-    @Override
-    public void mousePressed(MouseEvent e) {
-         
+    
+    private void changed(String message){
+        setChanged();
+        notifyObservers(message);
     }
-
-    @Override
-    public void mouseReleased(MouseEvent e) {
-         
+    
+    public GameState getGameState(){
+        return state;
     }
-
-    @Override
-    public void mouseEntered(MouseEvent e) {
-        
-    }
-
-    @Override
-    public void mouseExited(MouseEvent e) {
-        
+    
+    public void reset(){
+        Iterator i = al.getCells().entrySet().iterator();
+        while(i.hasNext()) {
+           Map.Entry<String, Cell> pairs = (Map.Entry)i.next();
+           pairs.getValue().setStatus(statusTypes.DEAD);
+        }
+        gameZone.repaint();
     }
 
     @Override
     public void run() {
-        if(al.getAliveCells() > 0){
-            createnextGen();
-            try {
-                Thread.sleep(1000);
-                run();
-            } catch(Exception ex) {
-                JOptionPane.showMessageDialog(this, "execution stoped");
+        if(createnextGen()){
+            if(al.getAliveCells() > 0){
+                try {
+                    Thread.sleep(1000);
+                    run();
+                } catch(Exception ex) {
+                    stopGame();
+                }
+            }
+            else{
+                stopGame("No more cells alive!");
             }
         }
         else{
-            stopGame();
-            JOptionPane.showMessageDialog(this, "No more cells alive");
+            stopGame("No more moves!");
         }
+    }
+    
+    class GameZone extends JPanel implements MouseListener{
+        
+        public GameZone(){
+            addMouseListener(this);
+        }
+        
+        @Override
+        public Dimension getPreferredSize() {
+           return new Dimension(boardSize, boardSize);
+        }
+
+        @Override
+        protected void paintComponent(Graphics g) {
+           super.paintComponent(g);
+           Graphics2D g2 = (Graphics2D) g;
+           Iterator i = al.getCells().entrySet().iterator();
+           while(i.hasNext()) {
+              Map.Entry<String, Cell> pairs = (Map.Entry)i.next();
+              Cell cell = pairs.getValue();
+              Rectangle rect = new Rectangle(cell.getX()*Cell.sideValue, cell.getY()*Cell.sideValue, Cell.sideValue, Cell.sideValue);
+              g2.draw(rect);
+              if(cell.getStatus() == statusTypes.ALIVE){
+                  g.fillRect(cell.getX()*Cell.sideValue, cell.getY()*Cell.sideValue, Cell.sideValue, Cell.sideValue);
+              }
+           }
+        }
+
+         @Override
+         public void mouseClicked(MouseEvent e) {
+             selectCell(e);
+         }
+
+         @Override
+         public void mousePressed(MouseEvent e) {
+
+         }
+
+         @Override
+         public void mouseReleased(MouseEvent e) {
+
+         }
+
+         @Override
+         public void mouseEntered(MouseEvent e) {
+
+         }
+
+         @Override
+         public void mouseExited(MouseEvent e) {
+
+         }
     }
 
 }
