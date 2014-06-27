@@ -21,14 +21,14 @@ public class Cell {
     }
     private statusTypes status;
     public static int[][] surroundingCoords = {
-                    {-1,-1},
-                    {-1,0},
-                    {-1,1},
-                    {0,-1},
-                    {0,1},
-                    {1,-1},
-                    {1,0},
-                    {1,1}
+        {-1,-1},
+        {-1,0},
+        {-1,1},
+        {0,-1},
+        {0,1},
+        {1,-1},
+        {1,0},
+        {1,1}
     };
     
     public Cell(){
@@ -79,6 +79,10 @@ public class Cell {
     
     public statusTypes getStatus() {
         return status;
+    }
+    
+    public boolean isAlive(){
+        return status == statusTypes.ALIVE;
     }
 
     public void setStatus(statusTypes status) {

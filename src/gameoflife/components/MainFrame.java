@@ -12,6 +12,7 @@ import javax.swing.JFrame;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JToolBar;
+import gameoflife.control.Algorithm;
 
 /**
  *
@@ -21,42 +22,39 @@ public class MainFrame extends JFrame {
    private Board board;
    private int boardSize = 500;
    private JMenuBar menubar;
+   private Thread golthread;
     
    public MainFrame() {
     super("Game Of Life");
     setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-    //setResizable(false);
-    menubar = new JMenuBar();
-    //getContentPane().add(menubar);
-    //setJMenuBar(menubar);
-    JMenu ops = new JMenu("Options");
-    menubar.add(ops);
-    
-    
     BorderLayout bord = new BorderLayout();
     setLayout(bord);
-    board = new Board(boardSize);
-    JButton button = new JButton("start");
-    button.addActionListener(e->{board.createnextGen();});
-    JToolBar bar = new JToolBar();
-    bar.add(button);
-    add("North", bar);
-    add("Center", board);
-    //getContentPane().add(board);
-    //add(board);
-    fill();
+    addOptions();
     pack();
     setLocationRelativeTo(null);
     setVisible(true);
    }
-   
-   private void fill(){
-    int sides = boardSize/Cell.sideValue;
-    for (int i = 0; i < sides; i++) {
-        for (int j = 0; j < sides; j++) {
-            board.addCell(new Cell(i, j));
-        }
-    }
-   }
 
+   private void addMenu(){
+        menubar = new JMenuBar();
+        JMenu ops = new JMenu("Options");
+        menubar.add(ops);
+   }
+   
+   private void addOptions(){
+        board = new Board(boardSize);
+        JButton startbtn = new JButton("start");
+        JButton stopbtn = new JButton("stop");
+        startbtn.addActionListener(e->{
+            board.startGame();
+        });
+        stopbtn.addActionListener(e->{
+            board.stopGame();
+        });
+        JToolBar bar = new JToolBar();
+        bar.add(startbtn);
+        bar.add(stopbtn);
+        add("North", bar);
+        add("Center", board);
+   }
 }

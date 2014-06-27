@@ -6,6 +6,9 @@
 
 package gameoflife.components;
 
+import gameoflife.components.Cell.statusTypes;
+import static gameoflife.components.Cell.statusTypes;
+import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
@@ -20,77 +23,80 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import static gameoflife.components.Cell.statusTypes;
 
 import javax.swing.*;
-
+import gameoflife.control.Algorithm;
 /**
  *
  * @author toshiba
  */
-public class Board extends JPanel implements MouseListener{
-   private HashMap<String, Cell> cells = new HashMap();
-   private HashMap<String, Cell> newcells = new HashMap();
-   private int panelSideValue;
-   
-   public Board(int panelSideValue){
-       this.panelSideValue = panelSideValue;
+public class Board extends JPanel implements MouseListener, Runnable{
+    private Algorithm al;
+    private int boardSize;
+    private Thread golthread;
+    
+    public Board(int boardSize){
+       this.al =new Algorithm(boardSize);
+       this.boardSize = boardSize;
        addMouseListener(this);
-   }
-
-   public void addCell(int x, int y) {
-      doAddCell(new Cell(x,y));
-   }
-   
-   public void addCell(Cell cell) {
-      doAddCell(cell);
-   }
-   
-   private void doAddCell(Cell cell){
-        if(!cells.containsValue(cell)){
-            cells.put(cell.getKey(),cell);
-        }
+       fill();
     }
-   
-   public void selectCell(MouseEvent e) {
-      int x = e.getPoint().x/Cell.sideValue;
-      int y = e.getPoint().y/Cell.sideValue;
-      Cell cell = cells.get(Cell.genKey(x, y));
-      if(cell != null){
-          cell.setStatus(statusTypes.ALIVE);
-      }
-      repaint();
-   }
-   
-   public void createnextGen(){
-       int sides = panelSideValue/Cell.sideValue;
-        int[] xy;
-        Cell cell;
-        Cell aux;
+    
+    private void fill(){
+        int sides = boardSize/Cell.sideValue;
         for (int i = 0; i < sides; i++) {
             for (int j = 0; j < sides; j++) {
-                cell = cells.get(Cell.genKey(i, j));
-                for(int i1=0; i1<Cell.surroundingCoords.length; i1++){
-                    xy = Cell.surroundingCoords[i1];
-                    aux = cells.get(Cell.genKey(i+xy[0], j+xy[1]));
-                    if(aux != null && aux.getStatus() == statusTypes.ALIVE){
-                        cell.addNeighbor();
-                    }
-                }
+                addCell(new Cell(i, j));
             }
         }
-   }
+    }
+    
+    public int getAliveCells(){
+        return al.getAliveCells();
+    }
+    
+    public void createnextGen(){
+        al.createnextGen();
+        repaint();
+    }
+   
+    public void addCell(Cell cell) {
+        al.addCell(cell);
+    }
+   
+    private void selectCell(MouseEvent e) {
+        int x = e.getPoint().x/Cell.sideValue;
+        int y = e.getPoint().y/Cell.sideValue;
+        Cell cell = al.getCells().get(Cell.genKey(x, y));
+        if(cell != null){
+            toggleCell(cell);
+        }
+        repaint();
+    }
+   
+    private void toggleCell(Cell cell){
+        al.toggleCell(cell);
+    }
+    
+    public void startGame(){
+        golthread  = new Thread(this);
+        golthread.start();
+    }
+    
+    public void stopGame(){
+        golthread.interrupt();
+    }
 
    @Override
    public Dimension getPreferredSize() {
-      return new Dimension(panelSideValue, panelSideValue);
+      return new Dimension(boardSize, boardSize);
    }
 
    @Override
    protected void paintComponent(Graphics g) {
       super.paintComponent(g);
       Graphics2D g2 = (Graphics2D) g;
-      Iterator i = cells.entrySet().iterator();
+      Iterator i = al.getCells().entrySet().iterator();
       while(i.hasNext()) {
          Map.Entry<String, Cell> pairs = (Map.Entry)i.next();
          Cell cell = pairs.getValue();
@@ -125,6 +131,23 @@ public class Board extends JPanel implements MouseListener{
     @Override
     public void mouseExited(MouseEvent e) {
         
+    }
+
+    @Override
+    public void run() {
+        if(al.getAliveCells() > 0){
+            createnextGen();
+            try {
+                Thread.sleep(1000);
+                run();
+            } catch(Exception ex) {
+                JOptionPane.showMessageDialog(this, "execution stoped");
+            }
+        }
+        else{
+            stopGame();
+            JOptionPane.showMessageDialog(this, "No more cells alive");
+        }
     }
 
 }
