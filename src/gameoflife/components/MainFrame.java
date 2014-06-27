@@ -33,6 +33,13 @@ public class MainFrame extends JFrame implements Observer{
    private JButton startbtn;
    private JButton stopbtn;
    private JButton resetbtn;
+   private JMenuItem rand;
+   private JMenu ops;
+   private JMenu help;
+   private static final String INSTRUCTIONS = "Click on the squares to select them and create your own patterns!\n"+
+           "or select the \"Fill randomly\" option in the menu. Enjoy!";
+   private static final String ABOUT = "Created by Carlos Gutierres \"coneramu@gmail.com\"\n Skype user: carlos.gutierrez.cone \n"+
+           "";
     
    public MainFrame() {
     super("Game Of Life");
@@ -49,7 +56,8 @@ public class MainFrame extends JFrame implements Observer{
 
    private void addMenu(){
         menubar = new JMenuBar();
-        JMenu ops = new JMenu("Options");
+        ops = new JMenu("Options");
+        help = new JMenu("Help");
         JMenu ncells= new JMenu("Number of cells");
         JMenuItem n50 = new JMenuItem("500");
         JMenuItem n40 = new JMenuItem("400"); 
@@ -77,7 +85,23 @@ public class MainFrame extends JFrame implements Observer{
         ncells.add(n20);
         ncells.add(n10);
         ops.add(ncells);
+        rand = new JMenuItem("Fill Randomly");
+        rand.addActionListener(e->{
+            board.fillRandomly();
+        });
+        ops.add(rand);
+        JMenuItem inst = new JMenuItem("Instructions");
+        inst.addActionListener(e->{
+            JOptionPane.showMessageDialog(this, INSTRUCTIONS);
+        });
+        JMenuItem about = new JMenuItem("About");
+        about.addActionListener(e->{
+            JOptionPane.showMessageDialog(this, ABOUT);
+        });
+        help.add(inst);
+        help.add(about);
         menubar.add(ops);
+        menubar.add(help);
         setJMenuBar(menubar);
    }
    
@@ -122,11 +146,13 @@ public class MainFrame extends JFrame implements Observer{
                 startbtn.setEnabled(false);
                 stopbtn.setEnabled(true);
                 resetbtn.setEnabled(false);
+                ops.setEnabled(false);
                 break;
             case STOPPED:
                 startbtn.setEnabled(true);
                 stopbtn.setEnabled(false);
                 resetbtn.setEnabled(true);
+                ops.setEnabled(true);
         }
     }
 }

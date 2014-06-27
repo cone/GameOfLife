@@ -50,6 +50,17 @@ public class Algorithm{
         }
     }
     
+    public void addAlive(boolean op){
+        if(op)
+            alivecells++;
+        else
+            alivecells--;
+    }
+    
+    public void resetAliveCellCount(){
+        alivecells=0;
+    }
+    
     public boolean createnextGen(){
         int sides = panelSideValue/Cell.sideValue;
         toLive.clear();

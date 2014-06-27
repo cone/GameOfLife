@@ -60,6 +60,24 @@ public class Board extends Observable implements Runnable{
         }
     }
     
+    public void fillRandomly(){
+        al.resetAliveCellCount();
+        double val;
+        Iterator i = al.getCells().entrySet().iterator();
+        while(i.hasNext()) {
+           Map.Entry<String, Cell> pairs = (Map.Entry)i.next();
+           val = Math.random()*10;
+           if(val > 5){
+                pairs.getValue().setStatus(statusTypes.ALIVE);
+                al.addAlive(true);
+           }
+           else{
+               pairs.getValue().setStatus(statusTypes.DEAD);
+           }
+        }
+        gameZone.repaint();
+    } 
+    
     public int getAliveCells(){
         return al.getAliveCells();
     }
@@ -124,6 +142,7 @@ public class Board extends Observable implements Runnable{
     }
     
     public void reset(){
+        al.resetAliveCellCount();
         Iterator i = al.getCells().entrySet().iterator();
         while(i.hasNext()) {
            Map.Entry<String, Cell> pairs = (Map.Entry)i.next();
@@ -181,7 +200,8 @@ public class Board extends Observable implements Runnable{
 
          @Override
          public void mouseClicked(MouseEvent e) {
-             selectCell(e);
+             if(state == GameState.STOPPED)
+                selectCell(e);
          }
 
          @Override
