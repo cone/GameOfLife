@@ -74,7 +74,7 @@ public class ClusterFinder {
             msgBuilder.append(separator);
             msgBuilder.append("\n");
             msgBuilder.append("Members of cluster No. ");
-            msgBuilder.append(i);
+            msgBuilder.append((i+1));
             msgBuilder.append("\n");
             cluster.stream().forEach((cell)->{
                 msgBuilder.append(cell.getKey());

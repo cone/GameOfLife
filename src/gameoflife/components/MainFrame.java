@@ -10,7 +10,11 @@ import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
+import javax.swing.JScrollPane;
+import javax.swing.JTextArea;
 import javax.swing.JToolBar;
+import javax.swing.ScrollPaneConstants;
+import javax.swing.border.EmptyBorder;
 
 /**
  *
@@ -20,8 +24,9 @@ public class MainFrame extends JFrame implements Observer{
    private Board board;
    private int boardSize = 500;
    private JMenuBar menubar;
-   private Thread golthread;
    private JLabel message;
+   private JTextArea clusterReport;
+   private JScrollPane clusterReportScroll;
    private JButton startbtn;
    private JButton stopbtn;
    private JButton resetbtn;
@@ -110,7 +115,7 @@ public class MainFrame extends JFrame implements Observer{
     */
    private void setNewBounds(int side, String amount){
        Cell.sideValue = side;
-       message.setText("  Number of cells changed to "+amount);
+       message.setText("Number of cells changed to "+amount);
        board.reset();
    }
    
@@ -133,11 +138,20 @@ public class MainFrame extends JFrame implements Observer{
         resetbtn.addActionListener(e->{
             board.reset();
         });
+        
+        clusterReport = new JTextArea(16, 20);
+        clusterReport.setEditable(false);
+        clusterReportScroll = new JScrollPane(clusterReport);
+        clusterReportScroll.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
+        
         clustersButton.addActionListener(e->{
             board.findClusters();
-            JOptionPane.showMessageDialog(this, board.getMessageString());
+            clusterReport.setText(board.getMessageString());
+            JOptionPane.showMessageDialog(this, clusterReportScroll, "Cluster Report", JOptionPane.INFORMATION_MESSAGE);
         });
-        message = new JLabel("  Welcome!");
+        message = new JLabel("Welcome!");
+        //Giving it a little margin as a separation from the buttons
+        message.setBorder(new EmptyBorder(10, 10, 10, 10));
         JToolBar bar = new JToolBar();
         bar.setFloatable(false);
         bar.add(startbtn);
@@ -158,7 +172,7 @@ public class MainFrame extends JFrame implements Observer{
     */
     @Override
     public void update(Observable o, Object arg) {
-        message.setText("   "+String.valueOf(arg));
+        message.setText(String.valueOf(arg));
         switch(board.getGameState()){
             case STARTED:
                 startbtn.setEnabled(false);
