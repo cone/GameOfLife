@@ -14,7 +14,7 @@ import java.util.Map;
 
 /**
  *
- * @author toshiba
+ * @author Carlos Gutierrez
  */
 public class ClusterFinder {
     private HashMap<String, Cell> board;
@@ -36,7 +36,7 @@ public class ClusterFinder {
         clusters.clear();
     }
     
-    public void findClusters(){
+    public ArrayList<ArrayList<Cell>> findClusters(){
         reset();
         Iterator i = board.entrySet().iterator();
         Cell aux;
@@ -53,15 +53,16 @@ public class ClusterFinder {
                currentCluster.add(aux);
                aux.setInCluster(true);
                //start seaching for other cluster members
-               getClusterMembers(aux);
+               getClusterMembers(aux, currentCluster);
                //after we added all the members to the hasmap(cluster)
                //add the cluster to the clusters array
                clusters.add(currentCluster);
            }
         }
+        return clusters;
     }
     
-    public void getClusterMembers(Cell cell){
+    public void getClusterMembers(Cell cell, ArrayList<Cell> currentCluster){
         int[] xy;
         Cell aux;
         for(int i1=0; i1<Cell.surroundingCoords.length; i1++){
@@ -70,7 +71,7 @@ public class ClusterFinder {
             if(aux != null && aux.isAlive() && !aux.isInCluster()){
                 aux.setInCluster(true);
                 currentCluster.add(aux);
-                getClusterMembers(aux);
+                getClusterMembers(aux, currentCluster);
             }
         }
     }
@@ -101,5 +102,9 @@ public class ClusterFinder {
     
     public ArrayList getClusters(){
         return clusters;
+    }
+    
+    public ArrayList<Cell> getCurrentCluster(){
+        return currentCluster;
     }
 }

@@ -196,6 +196,7 @@ public class MainFrame extends JFrame implements Observer{
                 stopbtn.setEnabled(true);
                 resetbtn.setEnabled(false);
                 ops.setEnabled(false);
+                clustersButton.setEnabled(false);
                 message.setText(String.valueOf(arg));
                 break;
             case STOPPED:
@@ -203,6 +204,7 @@ public class MainFrame extends JFrame implements Observer{
                 stopbtn.setEnabled(false);
                 resetbtn.setEnabled(true);
                 ops.setEnabled(true);
+                clustersButton.setEnabled(true);
                 message.setText(String.valueOf(arg));
             case STARTED_WITH_STATUS:
             case STOPPED_WITH_STATUS:
