@@ -2,14 +2,14 @@ package gameoflife.control;
 
 import gameoflife.components.*;
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 
 /**
  *
  * @author Carlos Gutierrez
  */
 public class Algorithm{
-    private HashMap<String, Cell> cells = new HashMap();
+    private LinkedHashMap<String, Cell> cells = new LinkedHashMap();
     private ArrayList<Cell> toLive = new ArrayList();
     private ArrayList<Cell> toDie = new ArrayList();
     private int panelSideValue;
@@ -23,7 +23,7 @@ public class Algorithm{
         return panelSideValue;
     }
     
-    public HashMap<String, Cell> getCells() {
+    public LinkedHashMap<String, Cell> getCells() {
         return cells;
     }
     

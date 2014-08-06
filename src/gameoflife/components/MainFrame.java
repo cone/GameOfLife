@@ -165,6 +165,8 @@ public class MainFrame extends JFrame implements Observer{
         clustersButton.addActionListener(e->{
             board.findClusters();
             clusterReport.setText(board.getMessageString());
+            clusterReport.setSelectionStart(0);
+            clusterReport.setSelectionEnd(0); 
             JOptionPane.showMessageDialog(this, clusterReportScroll, "Cluster Report", JOptionPane.INFORMATION_MESSAGE);
         });
         message = new JLabel("Welcome!");
