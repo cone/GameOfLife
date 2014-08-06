@@ -27,6 +27,11 @@ public class ClusterFinder {
         this.board = board;
     }
     
+    /**
+     * Method for reseting the cluster array
+     * and setting the "inCluster" property to "false"
+     * to the cells in those clusters
+     */
     public void reset(){
         clusters.stream().forEach((cluster)->{
             cluster.stream().forEach((cell)->{
@@ -36,6 +41,10 @@ public class ClusterFinder {
         clusters.clear();
     }
     
+    /**
+     * Method that starts the search fro clusters
+     * @return The clusters array
+     */
     public ArrayList<ArrayList<Cell>> findClusters(){
         reset();
         Iterator i = board.entrySet().iterator();
@@ -62,6 +71,14 @@ public class ClusterFinder {
         return clusters;
     }
     
+    /**
+     * Recoursive method that treats the cluster
+     * as a tree so it iterates through the nodes(neighbors)
+     * adding the child nodes to the cluster(Array)
+     * until it finds no more nodes.
+     * @param cell the "root node"
+     * @param currentCluster the Array that represents the cluster
+     */
     public void getClusterMembers(Cell cell, ArrayList<Cell> currentCluster){
         int[] xy;
         Cell aux;
@@ -76,6 +93,10 @@ public class ClusterFinder {
         }
     }
     
+    /**
+     * Method that constructs the message string fot the clusters report
+     * @return The clusters report message
+     */
     public String getMessageString(){
         String separator = "-----------------------";
         StringBuilder msgBuilder = new StringBuilder("Number of clusters = ");
@@ -96,14 +117,29 @@ public class ClusterFinder {
         return msgBuilder.toString();
     }
     
+    /**
+     * Method for getting the number of clusters obtained
+     * @return The current number of clusters
+     */
     public int getNumberOfClusters(){
         return clusters.size();
     }
     
+    /**
+     * Method that return the array
+     * that holds the clusters obtained
+     * @return the cluster array
+     */
     public ArrayList getClusters(){
         return clusters;
     }
     
+    /**
+     * Method that returns the current cluster
+     * Useful to obtain the current cluster that
+     * is beign processed
+     * @return the current cluster
+     */
     public ArrayList<Cell> getCurrentCluster(){
         return currentCluster;
     }
