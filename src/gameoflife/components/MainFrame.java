@@ -1,8 +1,10 @@
 package gameoflife.components;
 
 import java.awt.BorderLayout;
+import java.awt.Dimension;
 import java.util.Observable;
 import java.util.Observer;
+import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -10,10 +12,13 @@ import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
+import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.JToolBar;
 import javax.swing.ScrollPaneConstants;
+import javax.swing.SwingConstants;
+import javax.swing.border.BevelBorder;
 import javax.swing.border.EmptyBorder;
 
 /**
@@ -27,6 +32,7 @@ public class MainFrame extends JFrame implements Observer{
    private JLabel message;
    private JTextArea clusterReport;
    private JScrollPane clusterReportScroll;
+   private JLabel statusLabel;
    private JButton startbtn;
    private JButton stopbtn;
    private JButton resetbtn;
@@ -47,10 +53,22 @@ public class MainFrame extends JFrame implements Observer{
     setLayout(bord);
     addMenu();
     addOptions();
+    addStatusBar();
     pack();
     setLocationRelativeTo(null);
     setResizable(false);
     setVisible(true);
+   }
+   
+   private void addStatusBar(){
+       JPanel statusPanel = new JPanel();
+       statusPanel.setBorder(new BevelBorder(BevelBorder.LOWERED));
+       add(statusPanel, BorderLayout.SOUTH);
+       statusPanel.setPreferredSize(new Dimension(this.getWidth(), 16));
+       statusPanel.setLayout(new BoxLayout(statusPanel, BoxLayout.X_AXIS));
+       statusLabel = new JLabel("...");
+       statusLabel.setHorizontalAlignment(SwingConstants.LEFT);
+       statusPanel.add(statusLabel);
    }
 
    /**
@@ -172,19 +190,23 @@ public class MainFrame extends JFrame implements Observer{
     */
     @Override
     public void update(Observable o, Object arg) {
-        message.setText(String.valueOf(arg));
         switch(board.getGameState()){
             case STARTED:
                 startbtn.setEnabled(false);
                 stopbtn.setEnabled(true);
                 resetbtn.setEnabled(false);
                 ops.setEnabled(false);
+                message.setText(String.valueOf(arg));
                 break;
             case STOPPED:
                 startbtn.setEnabled(true);
                 stopbtn.setEnabled(false);
                 resetbtn.setEnabled(true);
                 ops.setEnabled(true);
+                message.setText(String.valueOf(arg));
+            case STARTED_WITH_STATUS:
+            case STOPPED_WITH_STATUS:
+                statusLabel.setText(String.valueOf(arg));
         }
     }
 }

@@ -20,13 +20,24 @@ public class ClusterFinder {
     private HashMap<String, Cell> board;
     private ArrayList<ArrayList<Cell>> clusters;
     private ArrayList<Cell> currentCluster;
+    public String STATUS_STRING = "Number of Clusters: ";
     
     public ClusterFinder(HashMap<String, Cell> board){
         clusters = new ArrayList<>();
         this.board = board;
     }
     
+    public void reset(){
+        clusters.stream().forEach((cluster)->{
+            cluster.stream().forEach((cell)->{
+                cell.setInCluster(false);
+            });
+        });
+        clusters.clear();
+    }
+    
     public void findClusters(){
+        reset();
         Iterator i = board.entrySet().iterator();
         Cell aux;
         while(i.hasNext()) {

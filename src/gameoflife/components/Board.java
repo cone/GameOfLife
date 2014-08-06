@@ -27,7 +27,9 @@ public class Board extends Observable implements Runnable{
     private ClusterFinder clusterFinder;
     public enum GameState{
         STARTED,
-        STOPPED
+        STOPPED,
+        STARTED_WITH_STATUS,
+        STOPPED_WITH_STATUS
     }
     private GameState state; 
     
@@ -97,12 +99,17 @@ public class Board extends Observable implements Runnable{
     public boolean createnextGen(){
         boolean hasMoreMoves = al.createnextGen();
         gameZone.repaint();
-        //clusterFinder.findClusters();
+        clusterFinder.reset();
+        clusterFinder.findClusters();
+        state = GameState.STARTED_WITH_STATUS;
+        changed(clusterFinder.STATUS_STRING+clusterFinder.getNumberOfClusters());
         return hasMoreMoves;
     }
     
     public void findClusters(){
         clusterFinder.findClusters();
+        state = GameState.STOPPED_WITH_STATUS;
+        changed(clusterFinder.STATUS_STRING+clusterFinder.getNumberOfClusters());
     }
     
     public String getMessageString(){
@@ -220,6 +227,8 @@ public class Board extends Observable implements Runnable{
            cell.setInCluster(false);
         }
         gameZone.repaint();
+        state = GameState.STOPPED_WITH_STATUS;
+        changed("...");
     }
 
     /**
@@ -276,7 +285,7 @@ public class Board extends Observable implements Runnable{
 
          @Override
          public void mouseClicked(MouseEvent e) {
-             if(state == GameState.STOPPED)
+             if(state == GameState.STOPPED || state == GameState.STOPPED_WITH_STATUS)
                 selectCell(e);
          }
 
