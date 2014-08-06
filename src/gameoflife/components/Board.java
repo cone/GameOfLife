@@ -11,6 +11,7 @@ import java.awt.event.MouseListener;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Observable;
+import gameoflife.control.ClusterFinder;
 
 import javax.swing.*;
 /**
@@ -23,6 +24,7 @@ public class Board extends Observable implements Runnable{
     private Thread golthread;
     private GameZone gameZone;
     private String message;
+    private ClusterFinder clusterFinder;
     public enum GameState{
         STARTED,
         STOPPED
@@ -35,6 +37,7 @@ public class Board extends Observable implements Runnable{
      */
     public Board(int boardSize){
        this.al =new Algorithm(boardSize);
+       clusterFinder = new ClusterFinder(al.getCells());
        this.boardSize = boardSize;
        gameZone = new GameZone();
        state = GameState.STOPPED;
@@ -94,7 +97,16 @@ public class Board extends Observable implements Runnable{
     public boolean createnextGen(){
         boolean hasMoreMoves = al.createnextGen();
         gameZone.repaint();
+        //clusterFinder.findClusters();
         return hasMoreMoves;
+    }
+    
+    public void findClusters(){
+        clusterFinder.findClusters();
+    }
+    
+    public String getMessageString(){
+        return clusterFinder.getMessageString();
     }
    
     /**
@@ -203,7 +215,9 @@ public class Board extends Observable implements Runnable{
         Iterator i = al.getCells().entrySet().iterator();
         while(i.hasNext()) {
            Map.Entry<String, Cell> pairs = (Map.Entry)i.next();
-           pairs.getValue().setStatus(statusTypes.DEAD);
+           Cell cell = pairs.getValue();
+           cell.setStatus(statusTypes.DEAD);
+           cell.setInCluster(false);
         }
         gameZone.repaint();
     }

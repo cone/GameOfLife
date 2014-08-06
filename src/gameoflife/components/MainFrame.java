@@ -25,6 +25,7 @@ public class MainFrame extends JFrame implements Observer{
    private JButton startbtn;
    private JButton stopbtn;
    private JButton resetbtn;
+   private JButton clustersButton;
    private JMenuItem rand;
    private JMenu ops;
    private JMenu help;
@@ -122,6 +123,7 @@ public class MainFrame extends JFrame implements Observer{
         startbtn = new JButton("Start");
         stopbtn = new JButton("Stop");
         resetbtn = new JButton("Reset");
+        clustersButton = new JButton("Cluster report");
         startbtn.addActionListener(e->{
             board.startGame();
         });
@@ -131,12 +133,17 @@ public class MainFrame extends JFrame implements Observer{
         resetbtn.addActionListener(e->{
             board.reset();
         });
+        clustersButton.addActionListener(e->{
+            board.findClusters();
+            JOptionPane.showMessageDialog(this, board.getMessageString());
+        });
         message = new JLabel("  Welcome!");
         JToolBar bar = new JToolBar();
         bar.setFloatable(false);
         bar.add(startbtn);
         bar.add(stopbtn);
         bar.add(resetbtn);
+        bar.add(clustersButton);
         bar.add(message);
         add("North", bar);
         add("Center", board.getPanel());

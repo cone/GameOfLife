@@ -9,6 +9,8 @@ public class Cell {
     private int x = 0;
     private int y = 0;
     private int neighborCount = 0;
+    private boolean inCluster = false;
+
     public enum statusTypes{
         ALIVE,
         DEAD
@@ -56,6 +58,14 @@ public class Cell {
 
     public void setY(int y) {
         this.y = y;
+    }
+    
+    public boolean isInCluster() {
+        return inCluster;
+    }
+
+    public void setInCluster(boolean inCluster) {
+        this.inCluster = inCluster;
     }
     
     /**
